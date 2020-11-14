@@ -4,6 +4,7 @@
 //load the 'express' module which makes writing webservers easy
 const express = require("express");
 const app = express();
+const _ = require("lodash");
 
 //load the quotes JSON
 const quotes = require("./quotes.json");
@@ -12,11 +13,50 @@ const quotes = require("./quotes.json");
 //   /                  - Return some helpful welcome info (text)
 //   /quotes            - Should return all quotes (json)
 //   /quotes/random     - Should return ONE quote (json)
+
 app.get("/", function (request, response) {
-  response.send("Neill's Quote Server!  Ask me for /quotes/random, or /quotes");
+  response.send(
+    "Welcome to Thony's Quote Server!  Ask me for /quotes/random, or /quotes"
+  );
 });
 
 //START OF YOUR CODE...
+
+app.get("/quotes", function (request, response) {
+  response.send(quotes);
+});
+
+app.get("/quotes/random", function (request, response) {
+  // response.send(pickFromArray(quotes));
+  response.send(_.sample(quotes));
+});
+
+// '/quotes/search?term=jobs'
+app.get("/quotes/search", function (request, response) {
+  const term = request.query.term.toLowerCase();
+  console.log("This is the term: " + term);
+
+  // const filtQuotes = quotes.filter((quote) => {
+  //   return quote.quote.includes(term);
+  // });
+
+  const filtQuotes = quotes.filter((quote) => {
+    let wordsOfQuote = quote.quote.toLowerCase();
+    let wordsOfAuthor = quote.author.toLowerCase();
+
+    if (wordsOfQuote.includes(term) || wordsOfAuthor.includes(term)) {
+      return true;
+    } else {
+      return false;
+    }
+  });
+
+  filtQuotes.length > 0
+    ? response.send(filtQuotes)
+    : response.send(`Ups! ${term} does not match any result!`);
+
+  // response.send(pickFromArray(quotes));
+});
 
 //...END OF YOUR CODE
 
