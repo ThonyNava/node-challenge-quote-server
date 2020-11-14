@@ -31,31 +31,21 @@ app.get("/quotes/random", function (request, response) {
   response.send(_.sample(quotes));
 });
 
-// '/quotes/search?term=jobs'
+// Exg: '/quotes/search?term=jobs'
 app.get("/quotes/search", function (request, response) {
   const term = request.query.term.toLowerCase();
   console.log("This is the term: " + term);
-
-  // const filtQuotes = quotes.filter((quote) => {
-  //   return quote.quote.includes(term);
-  // });
 
   const filtQuotes = quotes.filter((quote) => {
     let wordsOfQuote = quote.quote.toLowerCase();
     let wordsOfAuthor = quote.author.toLowerCase();
 
-    if (wordsOfQuote.includes(term) || wordsOfAuthor.includes(term)) {
-      return true;
-    } else {
-      return false;
-    }
+    return wordsOfQuote.includes(term) || wordsOfAuthor.includes(term);
   });
 
   filtQuotes.length > 0
     ? response.send(filtQuotes)
     : response.send(`Ups! ${term} does not match any result!`);
-
-  // response.send(pickFromArray(quotes));
 });
 
 //...END OF YOUR CODE
